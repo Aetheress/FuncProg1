@@ -6,8 +6,8 @@ import java.util.stream.IntStream;
 
 public class PerfectNumber {
 	
-	public interface STATE {
-		void classifier();
+	public enum STATE {
+		DEFICIENT, PERFECT, ABUNDANT
 	}
 	
 	public static Set<Integer> divisors(int n) {
@@ -22,31 +22,29 @@ public class PerfectNumber {
 	}
 	
 	public static STATE process(int n) {
-		return new STATE() {
-			public void classifier() {
 				Integer sumReduce = divisors(n).stream().reduce(0, (a,b) -> a+b);
 				Predicate<Integer> deficiency = (sum) -> sum<n;
 				Predicate<Integer> perfection = (sum) -> sum==n;
-				Predicate<Integer> abundance = (sum) -> sum>n;
 				Consumer<Integer> sumAnnounce = (sum) -> System.out.println("Divisor sum of number " + n + " is " + sum);
 				sumAnnounce.accept(sumReduce);
-				Consumer<Integer> typeAnnounce = (sum) -> {
-					if (deficiency.test(sum)) System.out.println("Number " + n + " is deficient.");
-					else if (perfection.test(sum)) System.out.println("Number " + n + " is perfect.");
-					else if (abundance.test(sum)) System.out.println("Number " + n + " is abundant.");
-					else System.out.println("Error in calculating type of given number.");
-				};
-				typeAnnounce.accept(sumReduce);
-			}
-		};
+				if (deficiency.test(sumReduce)) return STATE.DEFICIENT;
+				else if (perfection.test(sumReduce)) return STATE.PERFECT;
+				else return STATE.ABUNDANT;
 	}
 	
 	public static void detect(int n) {
 		STATE type = process(n);
-		type.classifier();
+		Consumer<STATE> stateAnnounce = (state) -> System.out.println("Number " + n + " is " + state.toString());
+		stateAnnounce.accept(type);
+		System.out.println();
 	}
 	
 	public static void main(String[] args) {
-		detect(12);
+		detect(6);
+		detect(8);
+		detect(20);
+		//do not have the functionality to test 16 with sqrt yet
+		detect(1);
+		//tests for divisors for numbers 1, 6 and 8 are already passed in the middle of their previous tests
 	}
 }
