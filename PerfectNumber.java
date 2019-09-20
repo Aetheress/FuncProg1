@@ -27,10 +27,30 @@ public class PerfectNumber {
 				Integer sumReduce = divisors(n).stream().reduce(0, (a,b) -> a+b);
 				Predicate<Integer> deficiency = (sum) -> sum<n;
 				Predicate<Integer> perfection = (sum) -> sum==n;
+				Predicate<Integer> abundance = (sum) -> sum>n;
+				List<Boolean> stateList = new ArrayList<>();
+				stateList.add(deficiency.test(sumReduce));
+				stateList.add(perfection.test(sumReduce));
+				stateList.add(abundance.test(sumReduce));
+				Map<List<Boolean>, STATE> stateMap = new HashMap();
+				List<Boolean> states1 = new ArrayList<>();
+				List<Boolean> states2 = new ArrayList<>();
+				List<Boolean> states3 = new ArrayList<>();
+				states1.add(true);
+				states1.add(false);
+				states1.add(false);
+				states2.add(false);
+				states2.add(true);
+				states2.add(false);
+				states3.add(false);
+				states3.add(false);
+				states3.add(true);
+				stateMap.put(states1, STATE.DEFICIENT);
+				stateMap.put(states2, STATE.PERFECT);
+				stateMap.put(states3, STATE.ABUNDANT);
+				STATE type = stateMap.get(stateList);
 				System.out.println("Divisor sum of number " + n + " is " + sumReduce);
-				if (deficiency.test(sumReduce)) return STATE.DEFICIENT;
-				else if (perfection.test(sumReduce)) return STATE.PERFECT;
-				else return STATE.ABUNDANT;
+				return type;
 	}
 	
 	public static void detect(int n) {
